@@ -11,6 +11,9 @@ import {
   PlusIcon,
   XMarkIcon,
   ArrowLeftIcon,
+  PhotoIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
 } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 
@@ -37,6 +40,7 @@ export default function ProfileEditPage() {
     images: [] as string[],
     newImage: '',
   })
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
 
   // Creator form data
   const [creatorData, setCreatorData] = useState({
@@ -88,6 +92,7 @@ export default function ProfileEditPage() {
             images: hotel.images || [],
             newImage: '',
           })
+          setImageErrors(new Set()) // Clear image errors when loading
           // Update profile name if not set
           if (!profileInfo.name) {
             setProfileData(prev => ({ ...prev, name: hotel.name || '' }))
@@ -184,6 +189,12 @@ export default function ProfileEditPage() {
         images: [...prev.images, prev.newImage.trim()],
         newImage: '',
       }))
+      // Clear error state for new image
+      setImageErrors(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(hotelData.images.length) // Clear error for the new image index
+        return newSet
+      })
     }
   }
 
@@ -192,6 +203,68 @@ export default function ProfileEditPage() {
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }))
+    // Update error indices after removal
+    setImageErrors(prev => {
+      const newSet = new Set<number>()
+      prev.forEach(errIndex => {
+        if (errIndex < index) {
+          newSet.add(errIndex)
+        } else if (errIndex > index) {
+          newSet.add(errIndex - 1)
+        }
+      })
+      return newSet
+    })
+  }
+
+  const moveImageUp = (index: number) => {
+    if (index === 0) return
+    setHotelData(prev => {
+      const newImages = [...prev.images]
+      const temp = newImages[index]
+      newImages[index] = newImages[index - 1]
+      newImages[index - 1] = temp
+      return { ...prev, images: newImages }
+    })
+    // Update error indices after move
+    setImageErrors(prev => {
+      const newSet = new Set<number>()
+      prev.forEach(errIndex => {
+        if (errIndex === index) {
+          newSet.add(index - 1)
+        } else if (errIndex === index - 1) {
+          newSet.add(index)
+        } else {
+          newSet.add(errIndex)
+        }
+      })
+      return newSet
+    })
+  }
+
+  const moveImageDown = (index: number) => {
+    if (index === hotelData.images.length - 1) return
+    setHotelData(prev => {
+      const newImages = [...prev.images]
+      const temp = newImages[index]
+      newImages[index] = newImages[index + 1]
+      newImages[index + 1] = temp
+      return { ...prev, images: newImages }
+    })
+    // Update error indices after move
+    setImageErrors(prev => {
+      const newSet = new Set<number>()
+      prev.forEach(errIndex => {
+        if (errIndex === index) {
+          newSet.add(index + 1)
+        } else if (errIndex === index + 1) {
+          newSet.add(index)
+        } else {
+          newSet.add(errIndex)
+        }
+      })
+      return newSet
+    })
   }
 
   // Creator form handlers
@@ -458,44 +531,153 @@ export default function ProfileEditPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Images (URLs)
-                </label>
-                <div className="flex gap-2 mb-3">
-                  <Input
-                    name="newImage"
-                    value={hotelData.newImage}
-                    onChange={handleHotelChange}
-                    placeholder="https://example.com/image.jpg"
-                    type="url"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                        addImage()
-                      }
-                    }}
-                  />
-                  <Button type="button" variant="outline" onClick={addImage}>
-                    <PlusIcon className="w-5 h-5" />
-                  </Button>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1 h-6 bg-gradient-to-b from-primary-600 to-primary-400 rounded-full"></div>
+                  <label className="block text-xl font-bold text-gray-900">
+                    Hotel Images
+                  </label>
                 </div>
-                {hotelData.images.length > 0 && (
-                  <div className="space-y-2">
-                    {hotelData.images.map((image, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
-                      >
-                        <span className="text-sm text-gray-700 truncate">{image}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index)}
-                          className="text-red-600 hover:text-red-700"
+                <p className="text-sm text-gray-600 mb-4 pl-4">
+                  Add images to showcase your hotel. The first image will be used as the main cover photo.
+                </p>
+                
+                {/* Add Image Input */}
+                <div className="mb-6 pl-4">
+                  <div className="flex gap-2">
+                    <Input
+                      name="newImage"
+                      value={hotelData.newImage}
+                      onChange={handleHotelChange}
+                      placeholder="https://example.com/image.jpg"
+                      type="url"
+                      className="flex-1"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          addImage()
+                        }
+                      }}
+                    />
+                    <Button 
+                      type="button" 
+                      variant="primary" 
+                      onClick={addImage}
+                      className="shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                    >
+                      <PlusIcon className="w-5 h-5 mr-2" />
+                      Add Image
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Image Gallery Preview */}
+                {hotelData.images.length > 0 ? (
+                  <div className="space-y-4 pl-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {hotelData.images.map((image, index) => (
+                        <div
+                          key={index}
+                          className="group relative bg-white rounded-xl border-2 border-gray-200 overflow-hidden hover:border-primary-400 transition-all duration-300 hover:shadow-xl"
                         >
-                          <XMarkIcon className="w-5 h-5" />
-                        </button>
-                      </div>
-                    ))}
+                          {/* Image Preview */}
+                          <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                            {!imageErrors.has(index) ? (
+                              <img
+                                src={image}
+                                alt={`Hotel image ${index + 1}`}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                onError={() => {
+                                  setImageErrors(prev => new Set(prev).add(index))
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-100">
+                                <PhotoIcon className="w-12 h-12 mb-2" />
+                                <span className="text-xs">Invalid Image URL</span>
+                              </div>
+                            )}
+                            {/* First Image Badge */}
+                            {index === 0 && (
+                              <div className="absolute top-2 left-2 px-2 py-1 bg-primary-600 text-white text-xs font-semibold rounded-lg shadow-lg">
+                                Cover Photo
+                              </div>
+                            )}
+                            {/* Image Number */}
+                            <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold rounded-lg">
+                              #{index + 1}
+                            </div>
+                          </div>
+
+                          {/* Controls */}
+                          <div className="p-3 bg-gradient-to-br from-gray-50 to-white">
+                            {/* URL Display */}
+                            <div className="mb-3">
+                              <p className="text-xs text-gray-500 mb-1 truncate" title={image}>
+                                {image}
+                              </p>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex items-center gap-2">
+                              {/* Move Up */}
+                              <button
+                                type="button"
+                                onClick={() => moveImageUp(index)}
+                                disabled={index === 0}
+                                className={`flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                  index === 0
+                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    : 'bg-primary-50 text-primary-700 hover:bg-primary-100 hover:scale-105'
+                                }`}
+                                title="Move up"
+                              >
+                                <ArrowUpIcon className="w-4 h-4" />
+                                <span className="hidden sm:inline">Up</span>
+                              </button>
+
+                              {/* Move Down */}
+                              <button
+                                type="button"
+                                onClick={() => moveImageDown(index)}
+                                disabled={index === hotelData.images.length - 1}
+                                className={`flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                  index === hotelData.images.length - 1
+                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    : 'bg-primary-50 text-primary-700 hover:bg-primary-100 hover:scale-105'
+                                }`}
+                                title="Move down"
+                              >
+                                <ArrowDownIcon className="w-4 h-4" />
+                                <span className="hidden sm:inline">Down</span>
+                              </button>
+
+                              {/* Remove */}
+                              <button
+                                type="button"
+                                onClick={() => removeImage(index)}
+                                className="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200 hover:scale-105"
+                                title="Remove image"
+                              >
+                                <XMarkIcon className="w-5 h-5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-500 text-center">
+                      💡 Tip: Drag images to reorder, or use the Up/Down buttons. The first image is your cover photo.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="pl-4">
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center bg-gradient-to-br from-gray-50 to-white">
+                      <PhotoIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600 font-medium mb-2">No images added yet</p>
+                      <p className="text-sm text-gray-500">
+                        Add image URLs above to showcase your hotel
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
