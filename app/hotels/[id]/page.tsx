@@ -15,6 +15,8 @@ import {
   PhoneIcon,
   EnvelopeIcon,
   GlobeAltIcon,
+  SparklesIcon,
+  BuildingOfficeIcon,
 } from '@heroicons/react/24/outline'
 
 export default function HotelDetailPage() {
@@ -46,15 +48,13 @@ export default function HotelDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
         <AuthenticatedNavigation />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
-            <div className="h-96 bg-gray-200 rounded-lg mb-8"></div>
-            <div className="space-y-4">
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="flex justify-center items-center py-20">
+            <div className="relative">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary-100"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-primary-600 absolute top-0 left-0"></div>
             </div>
           </div>
         </div>
@@ -65,13 +65,21 @@ export default function HotelDetailPage() {
 
   if (!hotel) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
         <AuthenticatedNavigation />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Hotel not found</h1>
-          <Link href={ROUTES.MARKETPLACE}>
-            <Button variant="primary">Back to Marketplace</Button>
-          </Link>
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 p-16">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
+              <BuildingOfficeIcon className="w-12 h-12 text-primary-600" />
+            </div>
+            <h1 className="text-3xl font-extrabold text-gray-900 mb-4">Hotel not found</h1>
+            <p className="text-gray-600 mb-8">The hotel you're looking for doesn't exist or has been removed.</p>
+            <Link href={ROUTES.MARKETPLACE}>
+              <Button variant="primary" size="lg" className="shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                Back to Marketplace
+              </Button>
+            </Link>
+          </div>
         </div>
         <Footer />
       </div>
@@ -79,68 +87,75 @@ export default function HotelDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
       <AuthenticatedNavigation />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="flex items-center text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 transition-all duration-200 hover:scale-105 font-medium group"
         >
-          <ArrowLeftIcon className="w-5 h-5 mr-2" />
+          <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           Back to Marketplace
         </button>
 
-        {/* Header Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
-          <div className="p-8">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-4xl font-bold text-gray-900">{hotel.name}</h1>
-                  {hotel.status === 'verified' && (
-                    <div className="flex items-center gap-1 bg-primary-50 text-primary-700 px-3 py-1 rounded-full">
-                      <CheckBadgeIcon className="w-5 h-5" />
-                      <span className="text-sm font-medium">Verified</span>
-                    </div>
-                  )}
-                </div>
-                <div className="flex items-center text-gray-600 mb-6">
-                  <MapPinIcon className="w-5 h-5 mr-2" />
-                  <span className="text-lg">{hotel.location}</span>
+        {/* Hero Header Section */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden mb-8 hover:shadow-3xl transition-all duration-300">
+          <div className="relative bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 px-8 py-16 overflow-hidden">
+            <div className="absolute inset-0 opacity-20" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+            }}></div>
+            <div className="relative">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-6">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-3 flex-wrap">
+                    <h1 className="text-5xl font-extrabold text-white drop-shadow-lg">{hotel.name}</h1>
+                    {hotel.status === 'verified' && (
+                      <div className="flex items-center gap-1 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+                        <CheckBadgeIcon className="w-5 h-5 text-white" />
+                        <span className="text-sm font-semibold text-white">Verified</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center text-primary-100 text-xl font-medium">
+                    <MapPinIcon className="w-6 h-6 mr-2" />
+                    <span>{hotel.location}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Description */}
-            <p className="text-gray-700 text-lg leading-relaxed mb-6">
-              {hotel.description}
-            </p>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => {
-                  console.log('Request collaboration with', hotel.id)
-                  // TODO: Implement collaboration request
-                }}
-              >
-                Request Collaboration
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => {
-                  console.log('Contact hotel', hotel.id)
-                  // TODO: Implement contact functionality
-                }}
-              >
-                Contact Hotel
-              </Button>
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-4">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="bg-white text-primary-700 hover:bg-primary-50 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  onClick={() => {
+                    console.log('Request collaboration with', hotel.id)
+                    // TODO: Implement collaboration request
+                  }}
+                >
+                  Request Collaboration
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-2 border-white/50 text-white hover:bg-white/20 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  onClick={() => {
+                    console.log('Contact hotel', hotel.id)
+                    // TODO: Implement contact functionality
+                  }}
+                >
+                  Contact Hotel
+                </Button>
+              </div>
             </div>
+          </div>
+
+          {/* Description Preview */}
+          <div className="p-8">
+            <p className="text-gray-700 text-lg leading-relaxed">{hotel.description}</p>
           </div>
         </div>
 
@@ -149,79 +164,93 @@ export default function HotelDetailPage() {
           <div className="lg:col-span-2 space-y-8">
             {/* Image Gallery */}
             {hotel.images && hotel.images.length > 0 ? (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="relative h-96 bg-gradient-to-br from-primary-100 to-primary-200">
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden hover:shadow-3xl transition-all duration-300">
+                <div className="relative h-[500px] bg-gradient-to-br from-primary-100 to-primary-200 overflow-hidden group">
                   <img
                     src={hotel.images[selectedImageIndex] || hotel.images[0]}
                     alt={hotel.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none'
                     }}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 {hotel.images.length > 1 && (
-                  <div className="p-4 grid grid-cols-4 gap-2">
-                    {hotel.images.slice(0, 4).map((image, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedImageIndex(index)}
-                        className={`relative h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                          selectedImageIndex === index
-                            ? 'border-primary-600 ring-2 ring-primary-200'
-                            : 'border-gray-200 hover:border-primary-300'
-                        }`}
-                      >
-                        <img
-                          src={image}
-                          alt={`${hotel.name} ${index + 1}`}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                          }}
-                        />
-                      </button>
-                    ))}
+                  <div className="p-6 bg-gradient-to-br from-gray-50 to-white">
+                    <div className="grid grid-cols-4 gap-3">
+                      {hotel.images.slice(0, 4).map((image, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedImageIndex(index)}
+                          className={`relative h-24 rounded-xl overflow-hidden border-2 transition-all duration-300 group ${
+                            selectedImageIndex === index
+                              ? 'border-primary-600 ring-4 ring-primary-200 scale-105'
+                              : 'border-gray-200 hover:border-primary-400 hover:scale-105'
+                          }`}
+                        >
+                          <img
+                            src={image}
+                            alt={`${hotel.name} ${index + 1}`}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none'
+                            }}
+                          />
+                          {selectedImageIndex === index && (
+                            <div className="absolute inset-0 bg-primary-600/20"></div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-4xl font-bold text-white">
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 p-16 text-center">
+                <div className="w-32 h-32 bg-gradient-to-br from-primary-400 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <span className="text-5xl font-bold text-white">
                     {hotel.name.charAt(0)}
                   </span>
                 </div>
-                <p className="text-gray-500">No images available</p>
+                <p className="text-gray-500 text-lg font-medium">No images available</p>
               </div>
             )}
 
             {/* Amenities Section */}
             {hotel.amenities && hotel.amenities.length > 0 && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Amenities</h2>
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 p-8 lg:p-10 hover:shadow-3xl transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-8 bg-gradient-to-b from-primary-600 to-primary-400 rounded-full"></div>
+                  <h2 className="text-3xl font-bold text-gray-900">Amenities</h2>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {hotel.amenities.map((amenity, index) => (
                     <div
                       key={index}
-                      className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200"
+                      className="group flex items-center gap-3 p-4 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl border border-primary-200/50 hover:shadow-lg transition-all duration-200 hover:scale-105"
                     >
-                      <div className="w-2 h-2 bg-primary-600 rounded-full mr-3"></div>
-                      <span className="text-gray-700 font-medium">{amenity}</span>
+                      <div className="p-2 bg-primary-500 rounded-lg">
+                        <SparklesIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="text-gray-700 font-semibold">{amenity}</span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Additional Information */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">About</h2>
-              <div className="space-y-4 text-gray-700">
+            {/* About Section */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 p-8 lg:p-10 hover:shadow-3xl transition-all duration-300">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-8 bg-gradient-to-b from-primary-600 to-primary-400 rounded-full"></div>
+                <h2 className="text-3xl font-bold text-gray-900">About</h2>
+              </div>
+              <div className="space-y-6 text-gray-700 text-lg leading-relaxed pl-4">
                 <p>
                   {hotel.description}
                 </p>
-                <p>
+                <p className="pt-4 border-t border-gray-200">
                   This property is verified and ready to collaborate with travel creators
                   and influencers. Connect directly to discuss partnership opportunities
                   and create authentic content that showcases the unique experience this
@@ -234,46 +263,59 @@ export default function HotelDetailPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Info Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Information</h3>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <MapPinIcon className="w-5 h-5 text-gray-400 mr-3 mt-0.5" />
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-6 bg-gradient-to-b from-primary-600 to-primary-400 rounded-full"></div>
+                <h3 className="text-xl font-bold text-gray-900">Quick Information</h3>
+              </div>
+              <div className="space-y-5">
+                <div className="flex items-start gap-3 p-3 bg-gradient-to-br from-gray-50 to-transparent rounded-xl">
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <MapPinIcon className="w-5 h-5 text-primary-600" />
+                  </div>
                   <div>
-                    <div className="text-sm text-gray-500">Location</div>
-                    <div className="text-gray-900 font-medium">{hotel.location}</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Location</div>
+                    <div className="text-gray-900 font-bold">{hotel.location}</div>
                   </div>
                 </div>
-                <div className="flex items-start">
-                  <CheckBadgeIcon className="w-5 h-5 text-gray-400 mr-3 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-gradient-to-br from-gray-50 to-transparent rounded-xl">
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <CheckBadgeIcon className="w-5 h-5 text-primary-600" />
+                  </div>
                   <div>
-                    <div className="text-sm text-gray-500">Status</div>
-                    <div className="text-gray-900 font-medium capitalize">{hotel.status}</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Status</div>
+                    <div className="text-gray-900 font-bold capitalize">{hotel.status}</div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Contact Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Get in Touch</h3>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-6 bg-gradient-to-b from-primary-600 to-primary-400 rounded-full"></div>
+                <h3 className="text-xl font-bold text-gray-900">Get in Touch</h3>
+              </div>
               <div className="space-y-3">
-                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-semibold">
                   <EnvelopeIcon className="w-5 h-5" />
                   Send Message
                 </button>
-                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-colors">
+                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-primary-300 text-primary-700 rounded-xl hover:bg-primary-50 transition-all duration-300 hover:scale-105 font-semibold">
                   <PhoneIcon className="w-5 h-5" />
                   Request Call
                 </button>
               </div>
             </div>
 
-            {/* Similar Hotels */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Explore More</h3>
+            {/* Explore More Card */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-6 bg-gradient-to-b from-primary-600 to-primary-400 rounded-full"></div>
+                <h3 className="text-xl font-bold text-gray-900">Explore More</h3>
+              </div>
               <Link href={ROUTES.MARKETPLACE}>
-                <Button variant="outline" size="md" className="w-full">
+                <Button variant="outline" size="md" className="w-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">
                   Browse All Hotels
                 </Button>
               </Link>
