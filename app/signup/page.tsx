@@ -7,6 +7,7 @@ import { ROUTES } from '@/lib/constants/routes'
 import { Button, Input } from '@/components/ui'
 import { Navigation, Footer } from '@/components/layout'
 import { UserType } from '@/lib/types'
+import { authService } from '@/services/auth'
 
 function SignUpForm() {
   const searchParams = useSearchParams()
@@ -18,6 +19,8 @@ function SignUpForm() {
     userType: 'creator' as UserType,
   })
   const [passwordError, setPasswordError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   // Set user type from URL query parameter if present
   useEffect(() => {
@@ -49,20 +52,46 @@ function SignUpForm() {
       return
     }
     
-    setPasswordError('')
-    // Form submission logic will be added later
-    console.log('Sign up:', formData)
-    
-    // For development: Set user as logged in but profile incomplete
-    // In production, this would come from the auth API response
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('isLoggedIn', 'true')
-      localStorage.setItem('profileComplete', 'false')
-      localStorage.setItem('hasProfile', 'false')
+    // Validate password length
+    if (formData.password.length < 8) {
+      setPasswordError('Password must be at least 8 characters')
+      return
     }
     
-    // After successful signup, redirect to marketplace
-    router.push(ROUTES.MARKETPLACE)
+    setPasswordError('')
+    setSubmitError('')
+    setIsSubmitting(true)
+    
+    try {
+      // Call the registration endpoint
+      const response = await authService.register({
+        email: formData.email,
+        password: formData.password,
+        type: formData.userType as 'hotel' | 'creator',
+      })
+      
+      // Store user info in localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('isLoggedIn', 'true')
+        localStorage.setItem('userId', response.id)
+        localStorage.setItem('userEmail', response.email)
+        localStorage.setItem('userType', response.type)
+        localStorage.setItem('profileComplete', 'false')
+        localStorage.setItem('hasProfile', 'false')
+      }
+      
+      // After successful signup, redirect to marketplace
+      router.push(ROUTES.MARKETPLACE)
+    } catch (error) {
+      console.error('Signup error:', error)
+      setSubmitError(
+        error instanceof Error 
+          ? error.message 
+          : 'An error occurred during registration. Please try again.'
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -194,13 +223,20 @@ function SignUpForm() {
                 </div>
               </div>
 
+              {submitError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  {submitError}
+                </div>
+              )}
+
               <Button
                 type="submit"
                 variant="primary"
                 size="lg"
                 className="w-full"
+                disabled={isSubmitting}
               >
-                Create Account
+                {isSubmitting ? 'Creating Account...' : 'Create Account'}
               </Button>
             </form>
 

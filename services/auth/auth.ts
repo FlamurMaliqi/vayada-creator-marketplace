@@ -1,8 +1,24 @@
 /**
  * Authentication service
- * 
- * This will be implemented when we add authentication
  */
+
+import { apiClient } from '../api/client'
+
+export interface RegisterRequest {
+  email: string
+  password: string
+  type: 'hotel' | 'creator'
+  name?: string
+}
+
+export interface RegisterResponse {
+  id: string
+  email: string
+  name: string
+  type: string
+  status: string
+  message: string
+}
 
 export const authService = {
   /**
@@ -16,9 +32,13 @@ export const authService = {
   /**
    * Register user
    */
-  register: async (data: { email: string; password: string; type: 'hotel' | 'creator' }) => {
-    // TODO: Implement registration
-    throw new Error('Not implemented yet')
+  register: async (data: RegisterRequest): Promise<RegisterResponse> => {
+    return apiClient.post<RegisterResponse>('/auth/register', {
+      email: data.email,
+      password: data.password,
+      type: data.type,
+      ...(data.name && { name: data.name }),
+    })
   },
 
   /**
