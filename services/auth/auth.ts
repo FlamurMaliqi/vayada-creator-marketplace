@@ -14,7 +14,7 @@ export interface RegisterResponse {
   id: string
   email: string
   name: string
-  type: string
+  type: 'hotel' | 'creator'
   status: string
   message: string
 }
@@ -28,7 +28,7 @@ export interface LoginResponse {
   id: string
   email: string
   name: string
-  type: string
+  type: 'hotel' | 'creator'
   status: string
   message: string
 }

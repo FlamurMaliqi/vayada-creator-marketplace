@@ -49,9 +49,11 @@ export default function LoginPage() {
           id: response.id,
           email: response.email,
           name: response.name,
-          type: response.type,
+          type: response.type, // 'hotel' or 'creator'
           status: response.status,
         }))
+        // Store user type separately for easy access
+        localStorage.setItem('userType', response.type)
         
         // Set profile completion status based on user status
         // For now, we'll check if status is verified (you can enhance this later)
