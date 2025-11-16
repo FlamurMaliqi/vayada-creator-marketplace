@@ -174,7 +174,7 @@ function ChatsPageContent() {
           </p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden">
+        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden">
           <div className="flex h-[calc(100vh-280px)] min-h-[600px]">
             {/* Conversations List */}
             <div className="w-full md:w-96 border-r border-gray-200 flex flex-col">

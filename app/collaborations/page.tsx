@@ -112,7 +112,7 @@ function CollaborationsPageContent() {
   }, [collaborations, statusFilter, searchQuery, sortOption, userType])
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
       <AuthenticatedNavigation />
       <div className="pt-16">
         <ProfileWarningBanner />
@@ -121,10 +121,10 @@ function CollaborationsPageContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-3">
             Collaborations
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-600 font-medium">
             {userType === 'hotel' 
               ? 'Manage your partnerships with creators and influencers'
               : 'Manage your partnerships with hotels'}
@@ -145,21 +145,21 @@ function CollaborationsPageContent() {
                 : 'Search by hotel name, location...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 w-full"
+              className="pl-10 w-full bg-white/80 backdrop-blur-sm border-gray-200/50"
             />
           </div>
 
           {/* Status Filters and Sort */}
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 bg-white/80 backdrop-blur-sm p-1 rounded-xl shadow-sm border border-gray-200/50 w-fit">
               {statusFilters.map((filter) => (
                 <button
                   key={filter.value}
                   onClick={() => setStatusFilter(filter.value)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
                     statusFilter === filter.value
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
+                      ? 'bg-primary-600 text-white shadow-md'
+                      : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
                   }`}
                 >
                   {filter.label}
@@ -185,7 +185,10 @@ function CollaborationsPageContent() {
         {/* Results */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            <div className="relative">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary-100"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-primary-600 absolute top-0 left-0"></div>
+            </div>
           </div>
         ) : filteredAndSortedCollaborations.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -199,8 +202,8 @@ function CollaborationsPageContent() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-lg">
-            <p className="text-gray-500 mb-4">
+          <div className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50">
+            <p className="text-gray-500 mb-6 text-lg">
               {searchQuery
                 ? 'No collaborations found matching your search.'
                 : statusFilter === 'all'
@@ -210,6 +213,7 @@ function CollaborationsPageContent() {
             <Button
               variant="primary"
               onClick={() => (window.location.href = ROUTES.MARKETPLACE)}
+              size="lg"
             >
               Browse Marketplace
             </Button>

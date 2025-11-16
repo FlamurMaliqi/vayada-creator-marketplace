@@ -64,7 +64,7 @@ export default function MarketplacePage() {
   })
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
       <AuthenticatedNavigation />
       <div className="pt-16">
         <ProfileWarningBanner />
@@ -74,43 +74,43 @@ export default function MarketplacePage() {
         {/* Header */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            <h1 className="text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-3">
               Marketplace
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-600 font-medium">
               Discover hotels and creators for authentic partnerships
             </p>
           </div>
         </div>
 
         {/* View Toggle */}
-        <div className="mb-6 flex gap-2">
+        <div className="mb-6 flex gap-2 bg-white/80 backdrop-blur-sm p-1 rounded-xl shadow-sm border border-gray-200/50 w-fit">
           <button
             onClick={() => setViewType('all')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
               viewType === 'all'
-                ? 'bg-primary-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
+                ? 'bg-primary-600 text-white shadow-md'
+                : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
             }`}
           >
             All
           </button>
           <button
             onClick={() => setViewType('hotels')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
               viewType === 'hotels'
-                ? 'bg-primary-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
+                ? 'bg-primary-600 text-white shadow-md'
+                : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
             }`}
           >
             Hotels
           </button>
           <button
             onClick={() => setViewType('creators')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
               viewType === 'creators'
-                ? 'bg-primary-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
+                ? 'bg-primary-600 text-white shadow-md'
+                : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
             }`}
           >
             Creators
@@ -129,7 +129,10 @@ export default function MarketplacePage() {
         {/* Results */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            <div className="relative">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary-100"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-primary-600 absolute top-0 left-0"></div>
+            </div>
           </div>
         ) : (
           <>
@@ -137,8 +140,8 @@ export default function MarketplacePage() {
             {(viewType === 'all' || viewType === 'hotels') && (
               <div className="mb-12">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    Hotels {filteredHotels.length > 0 && `(${filteredHotels.length})`}
+                  <h2 className="text-3xl font-bold text-gray-900">
+                    Hotels {filteredHotels.length > 0 && <span className="text-primary-600">({filteredHotels.length})</span>}
                   </h2>
                 </div>
                 {filteredHotels.length > 0 ? (
@@ -148,8 +151,8 @@ export default function MarketplacePage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-12 bg-white rounded-lg">
-                    <p className="text-gray-500">No hotels found matching your criteria.</p>
+                  <div className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50">
+                    <p className="text-gray-500 text-lg">No hotels found matching your criteria.</p>
                   </div>
                 )}
               </div>
@@ -159,8 +162,8 @@ export default function MarketplacePage() {
             {(viewType === 'all' || viewType === 'creators') && (
               <div>
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    Creators & Influencers {filteredCreators.length > 0 && `(${filteredCreators.length})`}
+                  <h2 className="text-3xl font-bold text-gray-900">
+                    Creators & Influencers {filteredCreators.length > 0 && <span className="text-primary-600">({filteredCreators.length})</span>}
                   </h2>
                 </div>
                 {filteredCreators.length > 0 ? (
@@ -170,8 +173,8 @@ export default function MarketplacePage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-12 bg-white rounded-lg">
-                    <p className="text-gray-500">No creators found matching your criteria.</p>
+                  <div className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50">
+                    <p className="text-gray-500 text-lg">No creators found matching your criteria.</p>
                   </div>
                 )}
               </div>
