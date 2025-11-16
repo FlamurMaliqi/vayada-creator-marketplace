@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { AuthenticatedNavigation, Footer, ProfileWarningBanner } from '@/components/layout'
+import { useSidebar } from '@/components/layout/AuthenticatedNavigation'
 import { Button, Input, Textarea } from '@/components/ui'
 import { ROUTES } from '@/lib/constants/routes'
 import type { UserType, Hotel, Creator } from '@/lib/types'
@@ -41,6 +42,7 @@ interface Conversation {
 }
 
 function ChatsPageContent() {
+  const { isCollapsed } = useSidebar()
   const searchParams = useSearchParams()
   const [userType, setUserType] = useState<UserType>('creator')
   const [conversations, setConversations] = useState<Conversation[]>([])
@@ -161,9 +163,12 @@ function ChatsPageContent() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
       <AuthenticatedNavigation />
-      <ProfileWarningBanner />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
+      <div className={`transition-all duration-300 ${isCollapsed ? 'pl-20' : 'pl-64'} pt-16`}>
+        <div className="pt-16">
+          <ProfileWarningBanner />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-3">
@@ -373,118 +378,119 @@ function ChatsPageContent() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Collaboration Request Modal */}
-      {showRequestModal && currentConversation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-primary-600 to-primary-700 px-8 py-6 rounded-t-3xl flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-white">Request Collaboration</h2>
-                <p className="text-primary-100 mt-1">
-                  Send a collaboration request to {currentConversation.participantName}
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  setShowRequestModal(false)
-                  setRequestForm({ message: '', proposedDates: '', collaborationType: '' })
-                }}
-                className="p-2 rounded-lg hover:bg-white/20 transition-colors"
-              >
-                <XMarkIcon className="w-6 h-6 text-white" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                handleRequestCollaboration()
-              }}
-              className="p-8 space-y-6"
-            >
-              {/* Collaboration Type */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Collaboration Type <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="collaborationType"
-                  value={requestForm.collaborationType}
-                  onChange={handleFormChange}
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                >
-                  <option value="">Select collaboration type</option>
-                  <option value="content-creation">Content Creation</option>
-                  <option value="social-media">Social Media Promotion</option>
-                  <option value="blog-post">Blog Post</option>
-                  <option value="video-production">Video Production</option>
-                  <option value="photography">Photography</option>
-                  <option value="influencer-stay">Influencer Stay</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              {/* Proposed Dates */}
-              <div>
-                <Input
-                  label="Proposed Dates"
-                  name="proposedDates"
-                  type="text"
-                  value={requestForm.proposedDates}
-                  onChange={handleFormChange}
-                  placeholder="e.g., March 15-20, 2024 or Flexible"
-                  helperText="When would you like to collaborate?"
-                />
-              </div>
-
-              {/* Message */}
-              <div>
-                <Textarea
-                  label="Message"
-                  name="message"
-                  value={requestForm.message}
-                  onChange={handleFormChange}
-                  required
-                  rows={6}
-                  placeholder="Tell them about your collaboration idea, your audience, and what you can offer..."
-                  helperText="Describe your collaboration proposal in detail"
-                />
-              </div>
-
-              {/* Form Actions */}
-              <div className="flex gap-4 pt-4 border-t border-gray-200">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="lg"
-                  className="flex-1"
+        {/* Collaboration Request Modal */}
+        {showRequestModal && currentConversation && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              {/* Modal Header */}
+              <div className="sticky top-0 bg-gradient-to-r from-primary-600 to-primary-700 px-8 py-6 rounded-t-3xl flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Request Collaboration</h2>
+                  <p className="text-primary-100 mt-1">
+                    Send a collaboration request to {currentConversation.participantName}
+                  </p>
+                </div>
+                <button
                   onClick={() => {
                     setShowRequestModal(false)
                     setRequestForm({ message: '', proposedDates: '', collaborationType: '' })
                   }}
+                  className="p-2 rounded-lg hover:bg-white/20 transition-colors"
                 >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="lg"
-                  className="flex-1"
-                  isLoading={requesting}
-                  disabled={requesting}
-                >
-                  {requesting ? 'Sending...' : 'Send Request'}
-                </Button>
+                  <XMarkIcon className="w-6 h-6 text-white" />
+                </button>
               </div>
-            </form>
+
+              {/* Modal Body */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  handleRequestCollaboration()
+                }}
+                className="p-8 space-y-6"
+              >
+                {/* Collaboration Type */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Collaboration Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="collaborationType"
+                    value={requestForm.collaborationType}
+                    onChange={handleFormChange}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    <option value="">Select collaboration type</option>
+                    <option value="content-creation">Content Creation</option>
+                    <option value="social-media">Social Media Promotion</option>
+                    <option value="blog-post">Blog Post</option>
+                    <option value="video-production">Video Production</option>
+                    <option value="photography">Photography</option>
+                    <option value="influencer-stay">Influencer Stay</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                {/* Proposed Dates */}
+                <div>
+                  <Input
+                    label="Proposed Dates"
+                    name="proposedDates"
+                    type="text"
+                    value={requestForm.proposedDates}
+                    onChange={handleFormChange}
+                    placeholder="e.g., March 15-20, 2024 or Flexible"
+                    helperText="When would you like to collaborate?"
+                  />
+                </div>
+
+                {/* Message */}
+                <div>
+                  <Textarea
+                    label="Message"
+                    name="message"
+                    value={requestForm.message}
+                    onChange={handleFormChange}
+                    required
+                    rows={6}
+                    placeholder="Tell them about your collaboration idea, your audience, and what you can offer..."
+                    helperText="Describe your collaboration proposal in detail"
+                  />
+                </div>
+
+                {/* Form Actions */}
+                <div className="flex gap-4 pt-4 border-t border-gray-200">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    className="flex-1"
+                    onClick={() => {
+                      setShowRequestModal(false)
+                      setRequestForm({ message: '', proposedDates: '', collaborationType: '' })
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    className="flex-1"
+                    isLoading={requesting}
+                    disabled={requesting}
+                  >
+                    {requesting ? 'Sending...' : 'Send Request'}
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
+        )}
         </div>
-      )}
+      </div>
 
       <Footer />
     </main>
@@ -496,9 +502,14 @@ export default function ChatsPage() {
     <Suspense fallback={
       <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
         <AuthenticatedNavigation />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
-          <div className="flex items-center justify-center h-96">
-            <p className="text-gray-500">Loading...</p>
+        <div className="pl-64 pt-16 transition-all duration-300">
+          <div className="pt-16">
+            <ProfileWarningBanner />
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="flex items-center justify-center h-96">
+              <p className="text-gray-500">Loading...</p>
+            </div>
           </div>
         </div>
       </main>

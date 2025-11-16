@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { AuthenticatedNavigation, Footer, ProfileWarningBanner } from '@/components/layout'
+import { useSidebar } from '@/components/layout/AuthenticatedNavigation'
 import { Button } from '@/components/ui'
 import { ROUTES } from '@/lib/constants/routes'
 // Removed API imports - using mock data only for frontend design
@@ -33,6 +34,7 @@ interface ProfileInfo {
 }
 
 export default function ProfilePage() {
+  const { isCollapsed } = useSidebar()
   const [userType, setUserType] = useState<UserType>('creator')
   const [hotel, setHotel] = useState<Hotel | null>(null)
   const [creator, setCreator] = useState<Creator | null>(null)
@@ -84,12 +86,16 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
         <AuthenticatedNavigation />
-        <ProfileWarningBanner />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
-          <div className="flex justify-center items-center py-20">
-            <div className="relative">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary-100"></div>
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-primary-600 absolute top-0 left-0"></div>
+        <div className={`transition-all duration-300 ${isCollapsed ? 'pl-20' : 'pl-64'} pt-16`}>
+          <div className="pt-16">
+            <ProfileWarningBanner />
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="flex justify-center items-center py-20">
+              <div className="relative">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary-100"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-primary-600 absolute top-0 left-0"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -101,9 +107,12 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
       <AuthenticatedNavigation />
-      <ProfileWarningBanner />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
+      <div className={`transition-all duration-300 ${isCollapsed ? 'pl-20' : 'pl-64'} pt-16`}>
+        <div className="pt-16">
+          <ProfileWarningBanner />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
@@ -472,6 +481,7 @@ export default function ProfilePage() {
             </div>
           </div>
         )}
+        </div>
       </div>
 
       <Footer />

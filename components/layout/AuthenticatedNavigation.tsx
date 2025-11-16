@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, createContext, useContext } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -8,26 +8,44 @@ import { ROUTES } from '@/lib/constants/routes'
 import {
   BuildingStorefrontIcon,
   ArrowRightOnRectangleIcon,
-  Bars3Icon,
-  XMarkIcon,
   UserGroupIcon,
   UserIcon,
   ChatBubbleLeftRightIcon,
+  ViewColumnsIcon,
 } from '@heroicons/react/24/outline'
+
+// Context for sidebar collapsed state
+const SidebarContext = createContext<{
+  isCollapsed: boolean
+  toggleSidebar: () => void
+}>({
+  isCollapsed: false,
+  toggleSidebar: () => {},
+})
+
+export const useSidebar = () => useContext(SidebarContext)
 
 export default function AuthenticatedNavigation() {
   const router = useRouter()
   const pathname = usePathname()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
+  // Load collapsed state from localStorage on mount
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10)
+    const saved = localStorage.getItem('sidebarCollapsed')
+    if (saved !== null) {
+      setIsCollapsed(JSON.parse(saved))
     }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Save collapsed state to localStorage
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(isCollapsed))
+  }, [isCollapsed])
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed)
+  }
 
   const handleLogout = () => {
     // TODO: Implement logout
@@ -61,113 +79,75 @@ export default function AuthenticatedNavigation() {
   ]
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/98 backdrop-blur-md shadow-lg border-b border-gray-200/50'
-          : 'bg-white/95 backdrop-blur-sm border-b border-gray-200'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 lg:h-18">
-          {/* Logo */}
+    <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
+      {/* Sidebar - Visible on all screen sizes */}
+      <aside
+        className={`fixed left-0 top-0 bottom-0 bg-primary-800 flex-col z-50 transition-all duration-300 ${
+          isCollapsed ? 'w-20' : 'w-64'
+        }`}
+      >
+        {/* Navigation Links */}
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          {navLinks.map((link) => {
+            const Icon = link.icon
+            const active = isActive(link.href)
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex items-center font-medium transition-all duration-200 ${
+                  isCollapsed ? 'justify-center px-3 py-3 rounded-lg' : 'gap-3 px-4 py-3 rounded-lg'
+                } ${
+                  active
+                    ? 'bg-primary-700 text-white'
+                    : 'text-white/80 hover:text-white hover:bg-primary-700/50'
+                }`}
+                title={isCollapsed ? link.label : undefined}
+              >
+                <Icon className="w-6 h-6 flex-shrink-0" />
+                {!isCollapsed && <span className="text-sm">{link.label}</span>}
+              </Link>
+            )
+          })}
+        </nav>
+
+        {/* Logout Button */}
+        <div className="p-4 border-t border-primary-700/50">
+          <button
+            onClick={handleLogout}
+            className={`flex items-center rounded-lg font-medium text-white/80 hover:text-white hover:bg-primary-700/50 transition-all duration-200 w-full ${
+              isCollapsed ? 'justify-center px-3 py-3' : 'gap-3 px-4 py-3'
+            }`}
+            title={isCollapsed ? 'Sign Out' : undefined}
+          >
+            <ArrowRightOnRectangleIcon className="w-6 h-6" />
+            {!isCollapsed && <span className="text-sm">Sign Out</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Top Header - Visible on all screen sizes */}
+      <header className={`fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-40 transition-all duration-300 ${isCollapsed ? 'pl-20' : 'pl-64'}`}>
+        <div className="flex items-center justify-between h-full w-full px-6">
+          {/* Toggle Button - Left */}
+          <button
+            onClick={toggleSidebar}
+            className="p-2 rounded-md text-gray-700 hover:text-primary-600 hover:bg-gray-100 transition-all duration-200"
+            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <ViewColumnsIcon className="w-5 h-5" />
+          </button>
+
+          {/* Logo - Centered */}
           <Link
             href={ROUTES.MARKETPLACE}
-            className="text-2xl font-bold text-primary-600"
+            className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
           >
             vayada
           </Link>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-2">
-            {navLinks.map((link) => {
-              const Icon = link.icon
-              const active = isActive(link.href)
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`relative flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    active
-                      ? 'text-primary-700 bg-primary-50 shadow-sm'
-                      : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
-                  }`}
-                >
-                  <Icon className={`w-5 h-5 ${active ? 'text-primary-600' : ''}`} />
-                  <span>{link.label}</span>
-                  {active && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1/2 h-0.5 bg-primary-600 rounded-full"></div>
-                  )}
-                </Link>
-              )
-            })}
-            
-            <div className="h-6 w-px bg-gray-300 mx-2"></div>
-            
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
-            >
-              <ArrowRightOnRectangleIcon className="w-5 h-5" />
-              <span>Sign Out</span>
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-primary-600 transition-colors"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? (
-              <XMarkIcon className="w-6 h-6" />
-            ) : (
-              <Bars3Icon className="w-6 h-6" />
-            )}
-          </button>
         </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
-          <div className="px-4 py-4 space-y-2">
-            {navLinks.map((link) => {
-              const Icon = link.icon
-              const active = isActive(link.href)
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${
-                    active
-                      ? 'text-primary-700 bg-primary-50 border-l-4 border-primary-600'
-                      : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Icon className={`w-5 h-5 ${active ? 'text-primary-600' : ''}`} />
-                  <span>{link.label}</span>
-                </Link>
-              )
-            })}
-            
-            <div className="border-t border-gray-200 my-2"></div>
-            
-            <button
-              onClick={() => {
-                handleLogout()
-                setIsMenuOpen(false)
-              }}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 w-full transition-all"
-            >
-              <ArrowRightOnRectangleIcon className="w-5 h-5" />
-              <span>Sign Out</span>
-            </button>
-          </div>
-        </div>
-      )}
-    </nav>
+      </header>
+    </SidebarContext.Provider>
   )
 }
 

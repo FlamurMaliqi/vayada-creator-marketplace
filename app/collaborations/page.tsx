@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { AuthenticatedNavigation, Footer, ProfileWarningBanner } from '@/components/layout'
+import { useSidebar } from '@/components/layout/AuthenticatedNavigation'
 import { CollaborationCard } from '@/components/marketplace'
 import { Button, Input } from '@/components/ui'
 // Removed API imports - using mock data only for frontend design
@@ -14,6 +15,7 @@ type StatusFilter = 'all' | 'pending' | 'accepted' | 'rejected'
 type SortOption = 'newest' | 'a-z'
 
 function CollaborationsPageContent() {
+  const { isCollapsed } = useSidebar()
   const searchParams = useSearchParams()
   const [collaborations, setCollaborations] = useState<
     (Collaboration & { hotel?: Hotel; creator?: Creator })[]
@@ -114,11 +116,12 @@ function CollaborationsPageContent() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
       <AuthenticatedNavigation />
-      <div className="pt-16">
-        <ProfileWarningBanner />
-      </div>
+      <div className={`transition-all duration-300 ${isCollapsed ? 'pl-20' : 'pl-64'} pt-16`}>
+        <div className="pt-16">
+          <ProfileWarningBanner />
+        </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-3">
@@ -219,6 +222,7 @@ function CollaborationsPageContent() {
             </Button>
           </div>
         )}
+        </div>
       </div>
 
       <Footer />

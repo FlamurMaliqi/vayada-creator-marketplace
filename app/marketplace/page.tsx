@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { AuthenticatedNavigation, Footer, ProfileWarningBanner } from '@/components/layout'
+import { useSidebar } from '@/components/layout/AuthenticatedNavigation'
 import { MarketplaceFilters } from '@/components/marketplace/MarketplaceFilters'
 import { HotelCard } from '@/components/marketplace/HotelCard'
 import { CreatorCard } from '@/components/marketplace/CreatorCard'
@@ -14,6 +15,7 @@ import type { Hotel, Creator } from '@/lib/types'
 type ViewType = 'all' | 'hotels' | 'creators'
 
 export default function MarketplacePage() {
+  const { isCollapsed } = useSidebar()
   const [viewType, setViewType] = useState<ViewType>('all')
   const [hotels, setHotels] = useState<Hotel[]>([])
   const [creators, setCreators] = useState<Creator[]>([])
@@ -66,11 +68,12 @@ export default function MarketplacePage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
       <AuthenticatedNavigation />
-      <div className="pt-16">
-        <ProfileWarningBanner />
-      </div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-8">
+      <div className={`transition-all duration-300 ${isCollapsed ? 'pl-20' : 'pl-64'} pt-16`}>
+        <div className="pt-16">
+          <ProfileWarningBanner />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
@@ -181,6 +184,7 @@ export default function MarketplacePage() {
             )}
           </>
         )}
+        </div>
       </div>
 
       <Footer />
