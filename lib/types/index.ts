@@ -54,6 +54,9 @@ export interface Hotel {
   description: string
   images: string[]
   amenities: string[]
+  accommodationType?: string // Hotel, Resort, Boutique Hotel, Lodge, Apartment, Villa
+  collaborationType?: 'Kostenlos' | 'Bezahlt' // Free, Paid
+  availability?: string[] // Array of months
   status: UserStatus
   createdAt: Date
   updatedAt: Date

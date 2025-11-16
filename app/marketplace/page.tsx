@@ -22,8 +22,11 @@ export default function MarketplacePage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filters, setFilters] = useState({
-    location: '',
-    niche: '',
+    accommodationType: '',
+    collaborationType: '',
+    availability: '',
+    followerRange: '',
+    platform: '',
   })
 
   useEffect(() => {
@@ -46,23 +49,87 @@ export default function MarketplacePage() {
   }
 
   const filteredHotels = hotels.filter((hotel) => {
-    if (!searchQuery) return true
-    const query = searchQuery.toLowerCase()
-    return (
-      hotel.name.toLowerCase().includes(query) ||
-      hotel.location.toLowerCase().includes(query) ||
-      hotel.description.toLowerCase().includes(query)
-    )
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      const matchesSearch = 
+        hotel.name.toLowerCase().includes(query) ||
+        hotel.location.toLowerCase().includes(query) ||
+        hotel.description.toLowerCase().includes(query)
+      if (!matchesSearch) return false
+    }
+
+    // Accommodation type filter
+    if (filters.accommodationType && hotel.accommodationType !== filters.accommodationType) {
+      return false
+    }
+
+    // Collaboration type filter
+    if (filters.collaborationType && hotel.collaborationType !== filters.collaborationType) {
+      return false
+    }
+
+    // Availability filter
+    if (filters.availability && hotel.availability) {
+      const hasAvailability = hotel.availability.includes(filters.availability)
+      if (!hasAvailability) return false
+    }
+
+    return true
   })
 
   const filteredCreators = creators.filter((creator) => {
-    if (!searchQuery) return true
-    const query = searchQuery.toLowerCase()
-    return (
-      creator.name.toLowerCase().includes(query) ||
-      creator.location.toLowerCase().includes(query) ||
-      creator.niche.some((n) => n.toLowerCase().includes(query))
-    )
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      const matchesSearch = 
+        creator.name.toLowerCase().includes(query) ||
+        creator.location.toLowerCase().includes(query) ||
+        creator.niche.some((n) => n.toLowerCase().includes(query))
+      if (!matchesSearch) return false
+    }
+
+    // Follower range filter
+    if (filters.followerRange) {
+      const range = filters.followerRange
+      const totalFollowers = creator.audienceSize
+      
+      let matchesRange = false
+      if (range === '1.000 - 10.000') {
+        matchesRange = totalFollowers >= 1000 && totalFollowers < 10000
+      } else if (range === '10.000 - 50.000') {
+        matchesRange = totalFollowers >= 10000 && totalFollowers < 50000
+      } else if (range === '50.000 - 100.000') {
+        matchesRange = totalFollowers >= 50000 && totalFollowers < 100000
+      } else if (range === '100.000 - 500.000') {
+        matchesRange = totalFollowers >= 100000 && totalFollowers < 500000
+      } else if (range === '500.000 - 1.000.000') {
+        matchesRange = totalFollowers >= 500000 && totalFollowers < 1000000
+      } else if (range === '1.000.000+') {
+        matchesRange = totalFollowers >= 1000000
+      }
+      
+      if (!matchesRange) return false
+    }
+
+    // Platform filter
+    if (filters.platform) {
+      // Map filter platform names to actual platform names
+      const platformMap: Record<string, string> = {
+        'YouTube': 'YouTube',
+        'YT': 'YouTube',
+        'Instagram': 'Instagram',
+        'TikTok': 'TikTok',
+        'Facebook': 'Facebook',
+      }
+      const filterPlatform = platformMap[filters.platform] || filters.platform
+      const hasPlatform = creator.platforms.some(
+        (p) => p.name.toLowerCase() === filterPlatform.toLowerCase()
+      )
+      if (!hasPlatform) return false
+    }
+
+    return true
   })
 
   return (
@@ -78,10 +145,10 @@ export default function MarketplacePage() {
         <div className="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <h1 className="text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-3">
-              Marketplace
+              Marktplatz
             </h1>
             <p className="text-lg text-gray-600 font-medium">
-              Discover hotels and creators for authentic partnerships
+              Entdecken Sie Hotels und Creator für authentische Partnerschaften
             </p>
           </div>
         </div>
@@ -96,7 +163,7 @@ export default function MarketplacePage() {
                 : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
             }`}
           >
-            All
+            Alle
           </button>
           <button
             onClick={() => setViewType('hotels')}
@@ -116,7 +183,7 @@ export default function MarketplacePage() {
                 : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
             }`}
           >
-            Creators
+            Creator
           </button>
         </div>
 
@@ -155,7 +222,7 @@ export default function MarketplacePage() {
                   </div>
                 ) : (
                   <div className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50">
-                    <p className="text-gray-500 text-lg">No hotels found matching your criteria.</p>
+                    <p className="text-gray-500 text-lg">Keine Hotels gefunden, die Ihren Kriterien entsprechen.</p>
                   </div>
                 )}
               </div>
@@ -166,7 +233,7 @@ export default function MarketplacePage() {
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-3xl font-bold text-gray-900">
-                    Creators & Influencers {filteredCreators.length > 0 && <span className="text-primary-600">({filteredCreators.length})</span>}
+                    Creator & Influencer {filteredCreators.length > 0 && <span className="text-primary-600">({filteredCreators.length})</span>}
                   </h2>
                 </div>
                 {filteredCreators.length > 0 ? (
@@ -177,7 +244,7 @@ export default function MarketplacePage() {
                   </div>
                 ) : (
                   <div className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200/50">
-                    <p className="text-gray-500 text-lg">No creators found matching your criteria.</p>
+                    <p className="text-gray-500 text-lg">Keine Creator gefunden, die Ihren Kriterien entsprechen.</p>
                   </div>
                 )}
               </div>
@@ -202,6 +269,9 @@ function getMockHotels(): Hotel[] {
       description: 'Luxury beachfront resort with stunning ocean views and world-class amenities.',
       images: ['/hotel1.jpg'],
       amenities: ['Pool', 'Spa', 'Beach Access', 'Restaurant'],
+      accommodationType: 'Resort',
+      collaborationType: 'Kostenlos',
+      availability: ['Juni', 'Juli', 'August', 'September'],
       status: 'verified',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -213,6 +283,9 @@ function getMockHotels(): Hotel[] {
       description: 'Cozy alpine lodge perfect for adventure seekers and nature lovers.',
       images: ['/hotel2.jpg'],
       amenities: ['Ski Access', 'Fireplace', 'Restaurant', 'Spa'],
+      accommodationType: 'Lodge',
+      collaborationType: 'Bezahlt',
+      availability: ['Dezember', 'Januar', 'Februar', 'März'],
       status: 'verified',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -224,6 +297,9 @@ function getMockHotels(): Hotel[] {
       description: 'Modern boutique hotel in the heart of Tokyo with minimalist design.',
       images: ['/hotel3.jpg'],
       amenities: ['City View', 'Restaurant', 'Gym', 'Concierge'],
+      accommodationType: 'Boutique Hotel',
+      collaborationType: 'Kostenlos',
+      availability: ['März', 'April', 'Mai', 'Juni'],
       status: 'verified',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -235,6 +311,9 @@ function getMockHotels(): Hotel[] {
       description: 'Luxurious desert resort with traditional architecture and modern comforts.',
       images: ['/hotel4.jpg'],
       amenities: ['Pool', 'Spa', 'Camel Rides', 'Fine Dining'],
+      accommodationType: 'Resort',
+      collaborationType: 'Bezahlt',
+      availability: ['Oktober', 'November', 'Dezember', 'Januar'],
       status: 'verified',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -246,6 +325,9 @@ function getMockHotels(): Hotel[] {
       description: 'Stunning cliffside hotel with breathtaking sunset views over the Aegean Sea.',
       images: ['/hotel5.jpg'],
       amenities: ['Infinity Pool', 'Spa', 'Beach Access', 'Wine Cellar'],
+      accommodationType: 'Hotel',
+      collaborationType: 'Kostenlos',
+      availability: ['Mai', 'Juni', 'Juli', 'August', 'September'],
       status: 'verified',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -257,6 +339,9 @@ function getMockHotels(): Hotel[] {
       description: 'Sustainable eco-lodge surrounded by tropical rainforest and wildlife.',
       images: ['/hotel6.jpg'],
       amenities: ['Eco Tours', 'Wildlife Viewing', 'Organic Restaurant', 'Yoga Deck'],
+      accommodationType: 'Lodge',
+      collaborationType: 'Kostenlos',
+      availability: ['Januar', 'Februar', 'März', 'April', 'Mai'],
       status: 'verified',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -300,7 +385,7 @@ function getMockCreators(): Creator[] {
       niche: ['City Travel', 'Food & Culture'],
       platforms: [
         { name: 'Instagram', handle: '@tokyoexplorer', followers: 156000, engagementRate: 4.8 },
-        { name: 'Blog', handle: 'tokyoexplorer.com', followers: 25000, engagementRate: 3.2 },
+        { name: 'Facebook', handle: '@tokyoexplorer', followers: 25000, engagementRate: 3.2 },
       ],
       audienceSize: 181000,
       location: 'Tokyo, Japan',
@@ -328,7 +413,7 @@ function getMockCreators(): Creator[] {
       niche: ['Beach Destinations', 'Romantic Travel'],
       platforms: [
         { name: 'Instagram', handle: '@islanddreams', followers: 198000, engagementRate: 4.5 },
-        { name: 'Pinterest', handle: '@islanddreams', followers: 67000, engagementRate: 2.8 },
+        { name: 'TikTok', handle: '@islanddreams', followers: 67000, engagementRate: 2.8 },
       ],
       audienceSize: 265000,
       location: 'Santorini, Greece',
@@ -342,7 +427,7 @@ function getMockCreators(): Creator[] {
       niche: ['Eco Travel', 'Adventure Travel'],
       platforms: [
         { name: 'Instagram', handle: '@ecoexplorer', followers: 112000, engagementRate: 5.8 },
-        { name: 'Blog', handle: 'ecoexplorer.com', followers: 32000, engagementRate: 4.1 },
+        { name: 'Facebook', handle: '@ecoexplorer', followers: 32000, engagementRate: 4.1 },
       ],
       audienceSize: 144000,
       location: 'Costa Rica',

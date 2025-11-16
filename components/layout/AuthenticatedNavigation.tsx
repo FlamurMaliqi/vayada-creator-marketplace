@@ -19,7 +19,7 @@ const SidebarContext = createContext<{
   isCollapsed: boolean
   toggleSidebar: () => void
 }>({
-  isCollapsed: false,
+  isCollapsed: true,
   toggleSidebar: () => {},
 })
 
@@ -28,13 +28,16 @@ export const useSidebar = () => useContext(SidebarContext)
 export default function AuthenticatedNavigation() {
   const router = useRouter()
   const pathname = usePathname()
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(true)
 
   // Load collapsed state from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('sidebarCollapsed')
     if (saved !== null) {
       setIsCollapsed(JSON.parse(saved))
+    } else {
+      // Default to collapsed if no saved preference
+      setIsCollapsed(true)
     }
   }, [])
 
