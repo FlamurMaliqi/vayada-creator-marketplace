@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AuthenticatedNavigation, Footer, ProfileWarningBanner } from '@/components/layout'
+import { AuthenticatedNavigation, ProfileWarningBanner } from '@/components/layout'
 import { useSidebar } from '@/components/layout/AuthenticatedNavigation'
 import { Button } from '@/components/ui'
 import { ROUTES } from '@/lib/constants/routes'
@@ -111,7 +111,6 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-        <Footer />
       </div>
     )
   }
@@ -532,8 +531,6 @@ export default function ProfilePage() {
         )}
         </div>
       </div>
-
-      <Footer />
     </main>
   )
 }

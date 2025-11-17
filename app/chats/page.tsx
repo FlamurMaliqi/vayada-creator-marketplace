@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { AuthenticatedNavigation, Footer, ProfileWarningBanner } from '@/components/layout'
+import { AuthenticatedNavigation, ProfileWarningBanner } from '@/components/layout'
 import { useSidebar } from '@/components/layout/AuthenticatedNavigation'
 import { Button, Input, Textarea } from '@/components/ui'
 import { ROUTES } from '@/lib/constants/routes'
@@ -491,8 +491,6 @@ function ChatsPageContent() {
         )}
         </div>
       </div>
-
-      <Footer />
     </main>
   )
 }

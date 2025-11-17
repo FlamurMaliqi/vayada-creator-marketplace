@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { AuthenticatedNavigation, Footer, ProfileWarningBanner } from '@/components/layout'
+import { AuthenticatedNavigation, ProfileWarningBanner } from '@/components/layout'
 import { useSidebar } from '@/components/layout/AuthenticatedNavigation'
 import { CollaborationCard } from '@/components/marketplace'
 import { Button, Input } from '@/components/ui'
@@ -224,8 +224,6 @@ function CollaborationsPageContent() {
         )}
         </div>
       </div>
-
-      <Footer />
     </main>
   )
 }
@@ -344,7 +342,6 @@ export default function CollaborationsPage() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
           </div>
         </div>
-        <Footer />
       </main>
     }>
       <CollaborationsPageContent />

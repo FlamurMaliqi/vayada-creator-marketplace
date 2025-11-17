@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { AuthenticatedNavigation, Footer, ProfileWarningBanner } from '@/components/layout'
+import { AuthenticatedNavigation, ProfileWarningBanner } from '@/components/layout'
 import { useSidebar } from '@/components/layout/AuthenticatedNavigation'
 import { MarketplaceFilters } from '@/components/marketplace/MarketplaceFilters'
 import { HotelCard } from '@/components/marketplace/HotelCard'
@@ -145,10 +145,10 @@ export default function MarketplacePage() {
         <div className="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <h1 className="text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-3">
-              Marktplatz
+              Marketplace
             </h1>
             <p className="text-lg text-gray-600 font-medium">
-              Entdecken Sie Hotels und Creator für authentische Partnerschaften
+              Explore Collaborations opportunities
             </p>
           </div>
         </div>
@@ -253,8 +253,6 @@ export default function MarketplacePage() {
         )}
         </div>
       </div>
-
-      <Footer />
     </main>
   )
 }
