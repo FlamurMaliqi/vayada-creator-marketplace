@@ -166,11 +166,16 @@ export function MarketplaceFilters({
     onFiltersChange(newFilters)
   }
 
-  const getHotelTypeDisplayText = () => {
-    if (selectedHotelTypes.length === 0) return 'Hotel Type'
-    if (selectedHotelTypes.length === 1) return selectedHotelTypes[0]
-    return `${selectedHotelTypes.length} selected`
+  const handleClearAll = () => {
+    const newFilters = { ...filters }
+    delete newFilters.hotelType
+    delete newFilters.offering
+    delete newFilters.availability
+    delete newFilters.budget
+    onFiltersChange(newFilters)
   }
+
+  const hasAnyFilters = selectedHotelTypes.length > 0 || filters.offering || filters.availability || filters.budget
 
   return (
     <div className="mb-8">
@@ -209,6 +214,7 @@ export function MarketplaceFilters({
 
       {/* Filter Options - Beneath Search Bar */}
       {(viewType === 'all' || viewType === 'hotels') && (
+        <>
         <div className="flex flex-wrap gap-2">
           {/* Hotel Type Filter - Multiselect */}
           <div className="relative">
@@ -217,7 +223,7 @@ export function MarketplaceFilters({
               onClick={() => setIsHotelTypeOpen(!isHotelTypeOpen)}
               className="inline-block px-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer hover:border-gray-400 transition-colors"
             >
-              {getHotelTypeDisplayText()}
+              Hotel Type
             </button>
             {isHotelTypeOpen && (
               <div
@@ -315,7 +321,93 @@ export function MarketplaceFilters({
               </option>
             ))}
           </select>
+
+          {/* Clear All Button */}
+          {hasAnyFilters && (
+            <button
+              onClick={handleClearAll}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Clear all
+            </button>
+          )}
         </div>
+
+        {/* Selected Filter Chips */}
+        {hasAnyFilters && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {/* Hotel Type Chips */}
+            {selectedHotelTypes.map((type) => (
+              <div
+                key={type}
+                className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-lg"
+              >
+                <span>{type}</span>
+                <button
+                  onClick={() => handleHotelTypeToggle(type)}
+                  className="hover:text-gray-900 transition-colors"
+                  aria-label={`Remove ${type}`}
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+
+            {/* Offering Chip */}
+            {filters.offering && (
+              <div className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-lg">
+                <span>{filters.offering}</span>
+                <button
+                  onClick={() => handleFilterChange('offering', '')}
+                  className="hover:text-gray-900 transition-colors"
+                  aria-label={`Remove ${filters.offering}`}
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            {/* Availability Chip */}
+            {filters.availability && (
+              <div className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-lg">
+                <span>{filters.availability}</span>
+                <button
+                  onClick={() => handleFilterChange('availability', '')}
+                  className="hover:text-gray-900 transition-colors"
+                  aria-label={`Remove ${filters.availability}`}
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            {/* Budget Chip */}
+            {filters.budget && (
+              <div className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-lg">
+                <span>{filters.budget}</span>
+                <button
+                  onClick={() => handleFilterChange('budget', '')}
+                  className="hover:text-gray-900 transition-colors"
+                  aria-label={`Remove ${filters.budget}`}
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+        </>
       )}
     </div>
   )
