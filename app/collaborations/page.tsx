@@ -194,7 +194,7 @@ function CollaborationsPageContent() {
             </div>
           </div>
         ) : filteredAndSortedCollaborations.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-4">
             {filteredAndSortedCollaborations.map((collaboration) => (
               <CollaborationCard
                 key={collaboration.id}
