@@ -45,10 +45,10 @@ export function CollaborationCard({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden border border-gray-200">
-      {/* Status Badge */}
-      <div className="px-6 pt-6 pb-4">
-        <div className="flex items-center justify-between mb-4">
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden border border-gray-200 flex flex-col">
+      {/* Header with Status and Date */}
+      <div className="px-6 pt-6 pb-4 border-b border-gray-100">
+        <div className="flex items-center justify-between">
           <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${statusInfo.color}`}>
             <StatusIcon className="w-4 h-4" />
             <span>{statusInfo.label}</span>
@@ -60,143 +60,145 @@ export function CollaborationCard({
         </div>
       </div>
 
-      {/* Content */}
-      <div className="px-6 pb-6">
-        {/* Show only the "other party" based on user type */}
+      {/* Main Content */}
+      <div className="px-6 py-4 flex-1">
+        {/* Show the "other party" based on user type */}
         {currentUserType === 'hotel' && collaboration.creator && (
-          <div className="border border-gray-200 rounded-lg p-4">
-            <div className="mb-4">
-              <div className="text-xs text-gray-500 mb-2">Collaborating With</div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold flex-shrink-0 text-lg">
-                  {collaboration.creator.name.charAt(0)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-gray-900 truncate text-lg">
-                      {collaboration.creator.name}
-                    </h4>
-                    {collaboration.creator.status === 'verified' && (
-                      <CheckBadgeIcon className="w-5 h-5 text-primary-600 flex-shrink-0" />
-                    )}
-                  </div>
-                  <div className="flex items-center text-gray-600 text-sm">
-                    <MapPinIcon className="w-4 h-4 mr-1" />
-                    <span className="truncate">{collaboration.creator.location}</span>
-                  </div>
-                </div>
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold flex-shrink-0 text-xl">
+              {collaboration.creator.name.charAt(0)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-bold text-gray-900 text-lg truncate">
+                  {collaboration.creator.name}
+                </h3>
+                {collaboration.creator.status === 'verified' && (
+                  <CheckBadgeIcon className="w-5 h-5 text-primary-600 flex-shrink-0" />
+                )}
+              </div>
+              <div className="flex items-center text-gray-600 text-sm mb-3">
+                <MapPinIcon className="w-4 h-4 mr-1" />
+                <span className="truncate">{collaboration.creator.location}</span>
               </div>
               {collaboration.creator.platforms && collaboration.creator.platforms.length > 0 && (
-                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                  <div className="text-xs text-gray-600 mb-1">Total Reach</div>
-                  <div className="text-lg font-semibold text-gray-900">
-                    {formatNumber(
-                      collaboration.creator.platforms.reduce(
-                        (sum, p) => sum + p.followers,
-                        0
-                      )
-                    )}
-                  </div>
+                <div className="text-sm text-gray-600">
+                  <span className="font-medium">Reach: </span>
+                  {formatNumber(
+                    collaboration.creator.platforms.reduce(
+                      (sum, p) => sum + p.followers,
+                      0
+                    )
+                  )}
                 </div>
               )}
             </div>
-            <Link href={`/creators/${collaboration.creatorId}`}>
-              <Button variant="outline" size="sm" className="w-full">
-                View Creator Profile
-              </Button>
-            </Link>
           </div>
         )}
 
         {currentUserType === 'creator' && collaboration.hotel && (
-          <div className="border border-gray-200 rounded-lg p-4">
-            <div className="mb-4">
-              <div className="text-xs text-gray-500 mb-2">Collaborating With</div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold flex-shrink-0 text-lg">
-                  {collaboration.hotel.name.charAt(0)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-gray-900 truncate text-lg">
-                      {collaboration.hotel.name}
-                    </h4>
-                    {collaboration.hotel.status === 'verified' && (
-                      <CheckBadgeIcon className="w-5 h-5 text-primary-600 flex-shrink-0" />
-                    )}
-                  </div>
-                  <div className="flex items-center text-gray-600 text-sm">
-                    <MapPinIcon className="w-4 h-4 mr-1" />
-                    <span className="truncate">{collaboration.hotel.location}</span>
-                  </div>
-                </div>
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold flex-shrink-0 text-xl">
+              {collaboration.hotel.name.charAt(0)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-bold text-gray-900 text-lg truncate">
+                  {collaboration.hotel.name}
+                </h3>
+                {collaboration.hotel.status === 'verified' && (
+                  <CheckBadgeIcon className="w-5 h-5 text-primary-600 flex-shrink-0" />
+                )}
+              </div>
+              <div className="flex items-center text-gray-600 text-sm mb-3">
+                <MapPinIcon className="w-4 h-4 mr-1" />
+                <span className="truncate">{collaboration.hotel.location}</span>
               </div>
               {collaboration.hotel.description && (
-                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                  <div className="text-xs text-gray-600 mb-1">Description</div>
-                  <div className="text-sm text-gray-900 line-clamp-2">
-                    {collaboration.hotel.description}
-                  </div>
+                <div className="text-sm text-gray-600 line-clamp-2">
+                  {collaboration.hotel.description}
                 </div>
               )}
             </div>
-            <Link href={`/hotels/${collaboration.hotelId}`}>
-              <Button variant="outline" size="sm" className="w-full">
-                View Hotel Profile
-              </Button>
-            </Link>
-          </div>
-        )}
-
-        {/* Actions */}
-        {onStatusUpdate && collaboration.status === 'pending' && (
-          <div className="mt-6 pt-6 border-t border-gray-200 flex gap-2">
-            {currentUserType !== 'hotel' && collaboration.hotel && (
-              <>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => onStatusUpdate(collaboration.id, 'accepted')}
-                >
-                  Accept
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => onStatusUpdate(collaboration.id, 'rejected')}
-                >
-                  Reject
-                </Button>
-              </>
-            )}
-            {currentUserType === 'hotel' && collaboration.creator && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1"
-                onClick={() => onStatusUpdate(collaboration.id, 'cancelled')}
-              >
-                Cancel Request
-              </Button>
-            )}
-          </div>
-        )}
-
-        {collaboration.status === 'accepted' && (
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <Button
-              variant="primary"
-              size="sm"
-              className="w-full"
-              onClick={() => onStatusUpdate?.(collaboration.id, 'completed')}
-            >
-              Mark as Completed
-            </Button>
           </div>
         )}
       </div>
+
+      {/* Action Buttons - Always visible for pending requests */}
+      {onStatusUpdate && collaboration.status === 'pending' && (
+        <div className="px-6 pb-6 pt-4 border-t border-gray-100">
+          <div className="flex gap-3">
+            <Button
+              variant="primary"
+              size="md"
+              className="flex-1"
+              onClick={() => onStatusUpdate(collaboration.id, 'accepted')}
+            >
+              Accept
+            </Button>
+            <Button
+              variant="outline"
+              size="md"
+              className="flex-1 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+              onClick={() => onStatusUpdate(collaboration.id, 'rejected')}
+            >
+              Decline
+            </Button>
+          </div>
+          <Link 
+            href={currentUserType === 'hotel' 
+              ? `/creators/${collaboration.creatorId}`
+              : `/hotels/${collaboration.hotelId}`
+            }
+            className="block mt-3"
+          >
+            <Button variant="outline" size="sm" className="w-full">
+              View Profile
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      {/* Actions for accepted status */}
+      {collaboration.status === 'accepted' && onStatusUpdate && (
+        <div className="px-6 pb-6 pt-4 border-t border-gray-100">
+          <Button
+            variant="primary"
+            size="md"
+            className="w-full"
+            onClick={() => onStatusUpdate(collaboration.id, 'completed')}
+          >
+            Mark as Completed
+          </Button>
+          <Link 
+            href={currentUserType === 'hotel' 
+              ? `/creators/${collaboration.creatorId}`
+              : `/hotels/${collaboration.hotelId}`
+            }
+            className="block mt-3"
+          >
+            <Button variant="outline" size="sm" className="w-full">
+              View Profile
+            </Button>
+          </Link>
+        </div>
+      )}
+
+      {/* View profile for other statuses */}
+      {(collaboration.status === 'rejected' || collaboration.status === 'completed' || collaboration.status === 'cancelled') && (
+        <div className="px-6 pb-6 pt-4 border-t border-gray-100">
+          <Link 
+            href={currentUserType === 'hotel' 
+              ? `/creators/${collaboration.creatorId}`
+              : `/hotels/${collaboration.hotelId}`
+            }
+          >
+            <Button variant="outline" size="md" className="w-full">
+              View Profile
+            </Button>
+          </Link>
+        </div>
+      )}
     </div>
   )
 }
