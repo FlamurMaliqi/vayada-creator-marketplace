@@ -7,6 +7,8 @@ import { useState } from 'react'
 interface MarketplaceFiltersProps {
   searchQuery: string
   onSearchChange: (query: string) => void
+  sortOption?: string
+  onSortChange?: (sort: string) => void
   filters: {
     // Hotel filters (for creators)
     accommodationType?: string
@@ -81,6 +83,8 @@ const PLATFORMS = [
 export function MarketplaceFilters({
   searchQuery,
   onSearchChange,
+  sortOption = 'relevance',
+  onSortChange,
   filters,
   onFiltersChange,
   viewType,
@@ -100,18 +104,37 @@ export function MarketplaceFilters({
 
   return (
     <div className="mb-8">
-      {/* Search Bar */}
-      <div className="mb-4">
-        <div className="relative">
+      {/* Search Bar and Sort - Same Line */}
+      <div className="mb-4 flex gap-4 items-center">
+        <div className="relative flex-1">
           <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           <Input
             type="text"
-            placeholder="Hotels, Creator suchen..."
+            placeholder={viewType === 'hotels' 
+              ? 'Search hotels by name or location...'
+              : viewType === 'creators'
+              ? 'Search creators by name or location...'
+              : 'Hotels, Creator suchen...'}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-12 pr-4 py-3 w-full"
           />
         </div>
+        {onSortChange && (
+          <div className="flex-shrink-0">
+            <select
+              value={sortOption}
+              onChange={(e) => onSortChange(e.target.value)}
+              className="px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-w-[150px]"
+            >
+              <option value="relevance">Relevance</option>
+              <option value="name-asc">Name (A-Z)</option>
+              <option value="name-desc">Name (Z-A)</option>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </div>
+        )}
       </div>
 
       {/* Filter Toggle */}

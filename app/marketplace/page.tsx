@@ -21,6 +21,7 @@ export default function MarketplacePage() {
   const [creators, setCreators] = useState<Creator[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortOption, setSortOption] = useState<string>('relevance')
   const [filters, setFilters] = useState<{
     accommodationType?: string
     collaborationType?: string
@@ -132,6 +133,27 @@ export default function MarketplacePage() {
     return true
   })
 
+  // Sort function
+  const sortItems = <T extends Hotel | Creator>(items: T[]): T[] => {
+    const sorted = [...items]
+    switch (sortOption) {
+      case 'name-asc':
+        return sorted.sort((a, b) => a.name.localeCompare(b.name))
+      case 'name-desc':
+        return sorted.sort((a, b) => b.name.localeCompare(a.name))
+      case 'newest':
+        return sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      case 'oldest':
+        return sorted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      case 'relevance':
+      default:
+        return sorted // Keep original order for relevance
+    }
+  }
+
+  const sortedHotels = sortItems(filteredHotels)
+  const sortedCreators = sortItems(filteredCreators)
+
   return (
     <main className="min-h-screen bg-white">
       <AuthenticatedNavigation />
@@ -191,6 +213,8 @@ export default function MarketplacePage() {
         <MarketplaceFilters
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          sortOption={sortOption}
+          onSortChange={setSortOption}
           filters={filters}
           onFiltersChange={setFilters}
           viewType={viewType}
@@ -211,12 +235,12 @@ export default function MarketplacePage() {
               <div className="mb-12">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-3xl font-bold text-gray-900">
-                    Hotels {filteredHotels.length > 0 && <span className="text-primary-600">({filteredHotels.length})</span>}
+                    Hotels {sortedHotels.length > 0 && <span className="text-primary-600">({sortedHotels.length})</span>}
                   </h2>
                 </div>
-                {filteredHotels.length > 0 ? (
+                {sortedHotels.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredHotels.map((hotel) => (
+                    {sortedHotels.map((hotel) => (
                       <HotelCard key={hotel.id} hotel={hotel} />
                     ))}
                   </div>
@@ -233,12 +257,12 @@ export default function MarketplacePage() {
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-3xl font-bold text-gray-900">
-                    Creator & Influencer {filteredCreators.length > 0 && <span className="text-primary-600">({filteredCreators.length})</span>}
+                    Creator & Influencer {sortedCreators.length > 0 && <span className="text-primary-600">({sortedCreators.length})</span>}
                   </h2>
                 </div>
-                {filteredCreators.length > 0 ? (
+                {sortedCreators.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredCreators.map((creator) => (
+                    {sortedCreators.map((creator) => (
                       <CreatorCard key={creator.id} creator={creator} />
                     ))}
                   </div>

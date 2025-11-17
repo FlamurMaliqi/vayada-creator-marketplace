@@ -136,52 +136,50 @@ function CollaborationsPageContent() {
 
         {/* Search and Filters */}
         <div className="mb-6 space-y-4">
-          {/* Search Bar */}
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+          {/* Search Bar and Sort - Same Line */}
+          <div className="flex gap-4 items-center">
+            <div className="relative flex-1">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+              </div>
+              <Input
+                type="text"
+                placeholder={userType === 'hotel' 
+                  ? 'Search by creator name, location...'
+                  : 'Search by hotel name, location...'}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 w-full bg-white border-gray-300"
+              />
             </div>
-            <Input
-              type="text"
-              placeholder={userType === 'hotel' 
-                ? 'Search by creator name, location...'
-                : 'Search by hotel name, location...'}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 w-full bg-white/80 backdrop-blur-sm border-gray-200/50"
-            />
-          </div>
-
-          {/* Status Filters and Sort */}
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex flex-wrap gap-2 bg-white/80 backdrop-blur-sm p-1 rounded-xl shadow-sm border border-gray-200/50 w-fit">
-              {statusFilters.map((filter) => (
-                <button
-                  key={filter.value}
-                  onClick={() => setStatusFilter(filter.value)}
-                  className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
-                    statusFilter === filter.value
-                      ? 'bg-primary-600 text-white shadow-md'
-                      : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
-                  }`}
-                >
-                  {filter.label}
-                </button>
-              ))}
-            </div>
-
             {/* Sort Filter */}
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-600 font-medium">Sort:</label>
+            <div className="flex-shrink-0">
               <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value as SortOption)}
-                className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-w-[150px]"
               >
                 <option value="newest">Newest</option>
                 <option value="a-z">A-Z</option>
               </select>
             </div>
+          </div>
+
+          {/* Status Filters */}
+          <div className="flex flex-wrap gap-2 bg-white p-1 rounded-xl shadow-sm border border-gray-200 w-fit">
+            {statusFilters.map((filter) => (
+              <button
+                key={filter.value}
+                onClick={() => setStatusFilter(filter.value)}
+                className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
+                  statusFilter === filter.value
+                    ? 'bg-primary-600 text-white shadow-md'
+                    : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
           </div>
         </div>
 
