@@ -141,7 +141,7 @@ export function CollaborationCard({
 
         {/* Action Buttons - Only for pending */}
         {onStatusUpdate && collaboration.status === 'pending' && (
-          <div className="flex flex-col gap-2 flex-shrink-0">
+          <div className="flex gap-2 flex-shrink-0">
             <Button
               variant="primary"
               size="md"
