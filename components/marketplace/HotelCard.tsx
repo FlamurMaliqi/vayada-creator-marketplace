@@ -63,8 +63,6 @@ const getMonthAbbr = (month: string): string => {
 
 export function HotelCard({ hotel }: HotelCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const displayedMonths = hotel.availability?.slice(0, 3) || []
-  const remainingMonths = (hotel.availability?.length || 0) - 3
 
   return (
     <>
@@ -106,17 +104,19 @@ export function HotelCard({ hotel }: HotelCardProps) {
         {/* Platforms */}
         {hotel.platforms && hotel.platforms.length > 0 && (
           <div className="mb-4">
-            <div className="text-xs text-gray-700 font-medium mb-2">Platforms:</div>
-            <div className="flex flex-wrap gap-2">
-              {hotel.platforms.map((platform, index) => (
-                <div
-                  key={index}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-xs font-medium"
-                >
-                  {getPlatformIcon(platform)}
-                  <span>{platform === 'YT' ? 'YouTube' : platform}</span>
-                </div>
-              ))}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-700 font-medium">Platforms:</span>
+              <div className="flex items-center gap-2">
+                {hotel.platforms.map((platform, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-center w-6 h-6 text-gray-700"
+                    title={platform === 'YT' ? 'YouTube' : platform}
+                  >
+                    {getPlatformIcon(platform)}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -124,21 +124,18 @@ export function HotelCard({ hotel }: HotelCardProps) {
         {/* Availability */}
         {hotel.availability && hotel.availability.length > 0 && (
           <div className="mb-6">
-            <div className="text-xs text-gray-700 font-medium mb-2">Available:</div>
-            <div className="flex flex-wrap gap-2">
-              {displayedMonths.map((month, index) => (
-                <span
-                  key={index}
-                  className="inline-block px-3 py-1.5 bg-gray-800 text-white rounded-full text-xs font-medium"
-                >
-                  {getMonthAbbr(month)}
-                </span>
-              ))}
-              {remainingMonths > 0 && (
-                <span className="inline-block px-3 py-1.5 bg-gray-800 text-white rounded-full text-xs font-medium">
-                  +{remainingMonths}
-                </span>
-              )}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-gray-700 font-medium">Available:</span>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {hotel.availability.map((month, index) => (
+                  <span
+                    key={index}
+                    className="inline-block px-2 py-1 bg-gray-800 text-white rounded text-xs font-medium"
+                  >
+                    {getMonthAbbr(month)}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         )}
