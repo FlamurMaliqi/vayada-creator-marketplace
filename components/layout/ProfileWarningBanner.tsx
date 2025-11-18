@@ -1,9 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { ROUTES } from '@/lib/constants/routes'
-import { Button } from '@/components/ui'
 import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export function ProfileWarningBanner() {
@@ -54,14 +51,9 @@ export function ProfileWarningBanner() {
               <h3 className="text-lg font-bold text-yellow-900 mb-1">
                 Complete Your Profile
               </h3>
-              <p className="text-sm text-yellow-800 mb-4">
+              <p className="text-sm text-yellow-800">
                 You need to complete your profile before you can submit collaboration requests.
               </p>
-              <Link href={ROUTES.PROFILE_EDIT}>
-                <Button variant="primary" size="sm" className="shadow-sm">
-                  Complete Profile
-                </Button>
-              </Link>
             </div>
             
             {/* Dismiss Button */}
