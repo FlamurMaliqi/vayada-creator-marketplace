@@ -225,7 +225,6 @@ export default function ProfilePage() {
           name: 'Sarah Travels',
           shortDescription: 'Luxury travel & lifestyle creator focusing on boutique hotels and unique experiences.',
           location: 'Los Angeles, USA',
-          portfolioLink: 'https://sarahtravels.com',
           status: 'verified',
           rating: {
             averageRating: 4.8,
