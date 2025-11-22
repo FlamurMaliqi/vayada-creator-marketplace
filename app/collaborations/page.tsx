@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { AuthenticatedNavigation, ProfileWarningBanner } from '@/components/layout'
 import { useSidebar } from '@/components/layout/AuthenticatedNavigation'
-import { CollaborationCard, CollaborationRejectedModal } from '@/components/marketplace'
+import { CollaborationCard, CollaborationRejectedModal, CollaborationRequestDetailModal } from '@/components/marketplace'
 import { Button, Input } from '@/components/ui'
 // Removed API imports - using mock data only for frontend design
 import { ROUTES } from '@/lib/constants/routes'
@@ -26,6 +26,9 @@ function CollaborationsPageContent() {
   const [sortOption, setSortOption] = useState<SortOption>('newest')
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [rejectedCollaboration, setRejectedCollaboration] = useState<
+    (Collaboration & { hotel?: Hotel; creator?: Creator }) | null
+  >(null)
+  const [detailCollaboration, setDetailCollaboration] = useState<
     (Collaboration & { hotel?: Hotel; creator?: Creator }) | null
   >(null)
   
@@ -97,6 +100,18 @@ function CollaborationsPageContent() {
         })
       }
     }, 500)
+  }
+
+  const handleViewDetails = (collaboration: Collaboration & { hotel?: Hotel; creator?: Creator }) => {
+    setDetailCollaboration(collaboration)
+  }
+
+  const handleAcceptFromModal = (id: string) => {
+    handleStatusUpdate(id, 'accepted')
+  }
+
+  const handleDeclineFromModal = (id: string) => {
+    handleStatusUpdate(id, 'rejected')
   }
 
   const handleRatingSubmit = async (id: string, rating: number, comment: string) => {
@@ -252,6 +267,7 @@ function CollaborationsPageContent() {
                 collaboration={collaboration}
                 onStatusUpdate={handleStatusUpdate}
                 onRatingSubmit={handleRatingSubmit}
+                onViewDetails={handleViewDetails}
                 currentUserType={userType}
               />
             ))}
@@ -283,6 +299,16 @@ function CollaborationsPageContent() {
         onClose={() => setRejectedCollaboration(null)}
         collaboration={rejectedCollaboration}
         currentUserType={userType}
+      />
+
+      {/* Collaboration Request Detail Modal */}
+      <CollaborationRequestDetailModal
+        isOpen={detailCollaboration !== null}
+        onClose={() => setDetailCollaboration(null)}
+        collaboration={detailCollaboration}
+        currentUserType={userType}
+        onAccept={handleAcceptFromModal}
+        onDecline={handleDeclineFromModal}
       />
     </main>
   )

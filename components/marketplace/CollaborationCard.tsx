@@ -18,6 +18,7 @@ interface CollaborationCardProps {
   }
   onStatusUpdate?: (id: string, status: CollaborationStatus) => void
   onRatingSubmit?: (id: string, rating: number, comment: string) => void
+  onViewDetails?: (collaboration: Collaboration & { hotel?: Hotel; creator?: Creator }) => void
   currentUserType?: UserType
 }
 
@@ -33,6 +34,7 @@ export function CollaborationCard({
   collaboration, 
   onStatusUpdate,
   onRatingSubmit,
+  onViewDetails,
   currentUserType 
 }: CollaborationCardProps) {
   const [showRatingModal, setShowRatingModal] = useState(false)
@@ -101,8 +103,19 @@ export function CollaborationCard({
     return "Looking forward to collaborating with you!"
   }
 
+  const handleCardClick = () => {
+    if (onViewDetails && collaboration.status === 'pending') {
+      onViewDetails(collaboration)
+    }
+  }
+
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 p-6">
+    <div 
+      className={`bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 p-6 ${
+        collaboration.status === 'pending' && onViewDetails ? 'cursor-pointer' : ''
+      }`}
+      onClick={collaboration.status === 'pending' && onViewDetails ? handleCardClick : undefined}
+    >
       <div className="flex items-start gap-4">
         {/* Profile Picture */}
         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold flex-shrink-0 text-2xl">
@@ -158,7 +171,7 @@ export function CollaborationCard({
 
         {/* Action Buttons - Only for pending */}
         {onStatusUpdate && collaboration.status === 'pending' && (
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
             <Button
               variant="primary"
               size="md"
